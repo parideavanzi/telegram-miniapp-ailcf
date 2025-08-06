@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trova il tuo volo!</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #f5f5f5;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #0088cc;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input, button, select {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #0088cc;
+      color: white;
+      border: none;
+      margin-top: 2rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0077b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>✈️ Offerta Volo A/R</h1>
+
+  <label for="from">Da (es: VRN)</label>
+  <input type="text" id="from" placeholder="Codice aeroporto"/>
+
+  <label for="to">A (es: LON)</label>
+  <input type="text" id="to" placeholder="Codice aeroporto"/>
+
+  <label for="depart">Data Andata</label>
+  <input type="date" id="depart"/>
+
+  <label for="return">Data Ritorno</label>
+  <input type="date" id="return"/>
+
+  <button onclick="sendFlightOffer()">🔗 Invia offerta</button>
+
+  <script>
+    async function sendFlightOffer() {
+      const from = document.getElementById('from').value.toUpperCase();
+      const to = document.getElementById('to').value.toUpperCase();
+      const depart = document.getElementById('depart').value;
+      const ret = document.getElementById('return').value;
+
+      if (!from || !to || !depart || !ret) {
+        alert("Compila tutti i campi!");
+        return;
+      }
+
+      // Formatto le date (yyyy-mm-dd → dd.mm.yyyy)
+      const formatDate = d => {
+        const [yyyy, mm, dd] = d.split("-");
+        return `${dd}.${mm}.${yyyy}`;
+      };
+
+      const affLink = `https://tp.media/r?marker=661110&trs=446432&p=4114&u=https%3A%2F%2Faviasales.com%2Fsearch%2F${from}${formatDate(depart)}${to}${formatDate(ret)}1&campaign_id=100`;
+
+      const message = `✈️ Offerta di volo trovata!\n🔁 ${from} ⇄ ${to}\n📅 ${formatDate(depart)} → ${formatDate(ret)}\n👉 ${affLink}`;
+
+      // Invia a Telegram Bot
+      const botToken = "INSERISCI_BOT_TOKEN";
+      const chatId = "INSERISCI_CHAT_ID";
+
+      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message,
+          parse_mode: "Markdown",
+        }),
+      });
+
+      alert("Messaggio inviato a Telegram!");
+    }
+  </script>
+</body>
+</html>
