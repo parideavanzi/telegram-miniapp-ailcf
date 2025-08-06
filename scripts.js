@@ -1,0 +1,21 @@
+const form = document.querySelector("#flightForm");
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const origin = document.querySelector("#origin").value;
+  const destination = document.querySelector("#destination").value;
+  const date = document.querySelector("#date").value;
+
+  fetch("https://eoxqgphv2u9th5p.m.pipedream.net", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ origin, destination, date })
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      alert("Richiesta inviata!");
+    });
+});
